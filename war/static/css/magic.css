@@ -1,0 +1,25 @@
+body {
+    padding-top: 100px;
+}
+
+span.m1 {
+    color: #FFB719;
+}
+span.m2 {
+    color: #BC00FF;
+}
+span.m3 {
+    color: #8812B2;
+}
+span.m4 {
+    color: #09B3F9;
+}
+span.m5 {
+    color: #2036BC;
+}
+a blockquote {
+    font-size: 36px;
+}
+a blockquote small {
+    font-size: 20px;
+}
