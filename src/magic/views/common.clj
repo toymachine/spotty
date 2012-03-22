@@ -16,7 +16,7 @@
 (defpartial layout [& content]
   (html5
    [:head
-    [:title "Magic"]
+    [:title "Spotty"]
     (include-css "/static/css/bootstrap.min.css")
     (include-css "/static/css/magic.css")]
    [:body

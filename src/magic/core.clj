@@ -8,7 +8,8 @@
             [noir.server :as server]
             [magic.views.welcome]
             [magic.views.common :as common]
-            [magic.login :as login]))
+            [magic.login :as login]
+            [clojure.tools.logging :as log]))
 
 (noir-statuses/set-page! 404
                          (common/layout
@@ -18,7 +19,7 @@
 
 (ae/def-appengine-app magic-app (noir-gae/gae-handler {:session-store (cookie-store {:key "rifkvkffdkorodkd"})}))
 
-(comment
-  (ae/serve magic-app)
-  (ae/stop)
-  )
+(defn -main []
+  (log/info "starting spotty!")
+  (ae/serve magic-app))
+
