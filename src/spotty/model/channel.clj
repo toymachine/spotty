@@ -16,9 +16,10 @@
 (defn create [creator name description imageurl]
   (ds/save! (Channel. creator name description imageurl)))
 
-(defn add-track [channel spottify-id duration-ms]
+(defn add-track [channel spotify-id duration-ms]
   (let [tracks (get channel :tracks [])
-        new-tracks (conj tracks (json/generate-string {:spottify-id spottify-id :duration-ms duration-ms}))]
+        new-tracks (conj tracks (json/generate-string {:spotify-id spotify-id :duration-ms duration-ms}))]
     (ds/save! (assoc channel :tracks new-tracks))))
 
-
+(defn get-tracks [channel]
+  (for [track (:tracks channel)] (json/parse-string track)))

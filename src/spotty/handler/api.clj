@@ -18,12 +18,26 @@
                            :imageurl (:imageurl c)})))
 
 (defpage "/api/channel/:id" {:keys [id]}
+  (if-let [c (channel/get-by-id (Integer/parseInt id))]
+    (response/json {:name (:name c)
+                    :description (:description c)
+                    :imageurl (:imageurl c)})
+    (response/status 404 "Channel not found")))
+
+(defpage "/api/channel/:id/tracks" {:keys [id]}
   (if-let [channel (channel/get-by-id (Integer/parseInt id))]
-    (response/json {:name (:name channel) :tracks (:tracks channel)})
-    (response/status 404 "Not found")))
+    (response/json (channel/get-tracks channel))
+    (response/status 404 "Channel not found")))
+
+(defpage [:any "/api/channel/:channel-id/track"] {:keys [channel-id spotify-id duration-ms]}
+  (if-let [channel (channel/get-by-id (Integer/parseInt channel-id))]
+    (do
+      (channel/add-track channel spotify-id (Integer/parseInt duration-ms))
+      (response/status 200 ""))
+    (response/status 404 "Channel not found")))
 
 (defpage [:post "/api/channel"] {:keys [name description imageurl]}
-  (response/json {:success true}))
+  (response/status 200 ""))
 
 (defpage "/api/init" []
   (init/init)
