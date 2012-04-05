@@ -12,4 +12,3 @@
 
 (defn send-message [creator channel msg]
   (ds/save! (ChatMessage. creator channel (new java.util.Date) msg)))
-

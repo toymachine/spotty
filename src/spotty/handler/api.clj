@@ -41,6 +41,20 @@
     (response/json (channel/get-tracks channel))
     (channel-not-found)))
 
+(defpage "/api/channel/:id/listeners" {:keys [id]}
+  ;;fetch all the tracks of the given channel
+  (if-let [channel (channel/get-by-id (Integer/parseInt id))]
+    (response/json (channel/get-listeners channel))
+    (channel-not-found)))
+
+(defpage "/api/channel/:id/listen" {:keys [id]}
+  ;;adds current member to listeners
+  (if-let [channel (channel/get-by-id (Integer/parseInt id))]
+    (do
+      (channel/touch-listener! channel (login/get-logged-in-member))
+      (ok))
+    (channel-not-found)))
+
 (defpage [:post "/api/channel/:channel-id/track"] {:keys [channel-id spotify-id duration-ms]}
   ;;add a track to a channel
   (if-let [channel (channel/get-by-id (Integer/parseInt channel-id))]
