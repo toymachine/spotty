@@ -17,7 +17,9 @@
     (channel/create boris "24 hr Disco!" "Where Disco Lives Forever!"
                     "http://www.digidact.nl/Digidact_C01/UploadData/images/49/0/Magda/disco.jpg")
 
-    (channel/add-track metallica "12345" 60000)))
+    (channel/add-track metallica "5Pu35c2kWGnzNMweieAViq" 60000)
+    (channel/add-track metallica "4ZPkGgFlRGZDrJ9M5AEcNR" 60000)))
+
 
 
 

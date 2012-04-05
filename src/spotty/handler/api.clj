@@ -87,7 +87,8 @@
   (ok))
 
 (defpage [:put "/api/member/"] {:keys [id name email]}
-  (member/create id name email))
+  (member/create id name email)
+  (response/status 200 "ok"))
 
 (defpage [:get "/api/member/:id"] {:keys [id]}
   ;;gets member by id
