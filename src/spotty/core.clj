@@ -1,4 +1,4 @@
-(ns magic.core
+(ns spotty.core
   (:use [ring.middleware.session.cookie :only [cookie-store]])
   (:require [appengine-magic.core :as ae]
             [noir.util.gae :as noir-gae]
@@ -16,9 +16,8 @@
 
 ;;(server/add-middleware login/logged-in-member-middleware)
 
-(ae/def-appengine-app magic-app (noir-gae/gae-handler {:session-store (cookie-store {:key "rifkvkffdkorodkd"})}))
+(ae/def-appengine-app spotty-app (noir-gae/gae-handler {:session-store (cookie-store {:key "rifkvkffdkorodkd"})}))
 
 (defn -main []
   (log/info "starting spotty!")
-  (ae/serve magic-app))
-
+  (ae/serve spotty-app))

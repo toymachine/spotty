@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?><web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.5" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 
-  <display-name>magic</display-name>
+  <display-name>spotty</display-name>
 
   <servlet>
     <servlet-name>app</servlet-name>
-    <servlet-class>magic.app_servlet</servlet-class>
+    <servlet-class>spotty.app_servlet</servlet-class>
   </servlet>
 
   <servlet-mapping>
