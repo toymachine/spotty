@@ -4,6 +4,7 @@
             [noir.response :as response]
             [noir.session :as session]
             [spotty.model.channel :as channel]
+            [spotty.model.member :as member]
             [spotty.model.init :as init]
             [clojure.tools.logging :as log])
   (:use [noir.core :only [defpage]]
@@ -38,6 +39,14 @@
 
 (defpage [:post "/api/channel"] {:keys [name description imageurl]}
   (response/status 200 ""))
+
+(defpage [:put "/api/member/"] {:keys [id name email]}
+  (member/create id name email))
+
+(defpage [:get "/api/member/:id"] {:keys [id]}
+  (if-let [member (member/get-by-id id)]
+    (response/json member)
+    (response/status 404 "Not found")))
 
 (defpage "/api/init" []
   (init/init)

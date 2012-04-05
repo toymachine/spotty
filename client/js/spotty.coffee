@@ -19,9 +19,17 @@ templates =
     </div>'
   channel_list_item: '<%= name %>'
 
+sync = (method, model, options) ->
+    options.url = "http://127.0.0.1:8080/api" + model.url()
+    if method is "read"
+      options.url = options.url + model.get "id"
+    Backbone.sync method, model, options
+
 class Member extends Backbone.Model
-    localStorage: new Store "member"
-    initialize: () ->
+  url: () ->
+    base = "/member/"
+  sync: sync
+  initialize: () ->
       @set {id: session.anonymousUserID}
 
 class MemberView extends Backbone.View
@@ -70,7 +78,6 @@ class ChannelListView extends Backbone.View
 class Channel extends Backbone.Model
 
 class ChannelList extends Backbone.Collection
-  localStorage: new Store "channel-list"
   model: Channel
 
 member = new Member()

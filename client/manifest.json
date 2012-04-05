@@ -1,0 +1,27 @@
+{
+    "BundleIdentifier": "spotty",
+	"BundleType": "Application",
+    "BundleVersion": "0.1",
+	"AcceptedLinkTypes":[
+		"album",
+		"artist",
+		"track",
+		"playlist",
+		"user"
+	],
+	"AppIcon": {
+		"18x18": "icon.png"
+	},
+	"AppName": {
+		"en": "Spotty Radio"
+	},
+	"SupportedLanguages": [
+		"en"
+	],
+	"RequiredPermissions": [
+		"https://*",
+		"http://*",
+        "sp://spotty"
+	],
+    "VendorIdentifier": "org.hyves"
+}
