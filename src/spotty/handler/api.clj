@@ -37,7 +37,7 @@
       (response/status 200 ""))
     (response/status 404 "Channel not found")))
 
-(defpage [:post "/api/channel"] {:keys [name description imageurl]}
+(defpage [:any "/api/channel"] {:keys [name description imageurl]}
   (response/status 200 ""))
 
 (defpage [:put "/api/member/"] {:keys [id name email]}
