@@ -11,11 +11,15 @@
         [clojure.pprint :only [pprint]]))
 
 (defpage "/api/channels" []
-  (response/json (for [c (channel/all)] [(ds/key-id c) (:name c)])))
+  (response/json
+   (for [c (channel/all)] {:id (ds/key-id c)
+                           :name (:name c)
+                           :description (:description c)
+                           :imageurl (:imageurl c)})))
 
 (defpage "/api/channel/:id" {:keys [id]}
   (if-let [channel (channel/get-by-id (Integer/parseInt id))]
-    (response/json {:name (:name channel)})
+    (response/json {:name (:name channel) :tracks (:tracks channel)})
     (response/status 404 "Not found")))
 
 (defpage [:post "/api/channel"] {:keys [name description imageurl]}
