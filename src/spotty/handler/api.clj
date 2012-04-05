@@ -30,14 +30,14 @@
     (response/json (channel/get-tracks channel))
     (response/status 404 "Channel not found")))
 
-(defpage [:any "/api/channel/:channel-id/track"] {:keys [channel-id spotify-id duration-ms]}
+(defpage [:post "/api/channel/:channel-id/track"] {:keys [channel-id spotify-id duration-ms]}
   (if-let [channel (channel/get-by-id (Integer/parseInt channel-id))]
     (do
       (channel/add-track channel spotify-id (Integer/parseInt duration-ms))
       (response/status 200 ""))
     (response/status 404 "Channel not found")))
 
-(defpage [:any "/api/channel"] {:keys [name description imageurl]}
+(defpage [:post "/api/channel"] {:keys [name description imageurl]}
   (response/status 200 ""))
 
 (defpage [:put "/api/member/"] {:keys [id name email]}
