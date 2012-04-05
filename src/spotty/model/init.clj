@@ -5,8 +5,8 @@
    [spotty.model.member :as member]))
 
 (defn init []
-  (let [henk (member/create "DJ Henk" "henkpunt@gmail.com")
-        boris (member/create "DJ Boris" "boris@hyves.nl")
+  (let [henk (member/create "0dd8a1809dc2cc5ca4a48496b4ee34108c393b73" "DJ Henk" "henkpunt@gmail.com")
+        boris (member/create "0dd8a1809dc2cc5ca4a48496b4ee34108c393b74" "DJ Boris" "boris@hyves.nl")
         metallica (channel/create henk "MetalliChannel" "Seek & Destroy!"
                                   "http://ticketsthere.files.wordpress.com/2010/07/metallica.jpg")
         ]
