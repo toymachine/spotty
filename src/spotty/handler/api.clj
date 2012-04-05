@@ -82,6 +82,9 @@
       (ok))
     (channel-not-found)))
 
+(defpage "/api/chat/token" []
+  (response/json {:token (chat/get-token-for-member (login/get-logged-in-member))}))
+
 (defpage [:post "/api/channel"] {:keys [name description imageurl]}
   ;;create a new channel
   (ok))

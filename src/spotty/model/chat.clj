@@ -8,6 +8,9 @@
 
 (ds/defentity ChatMessage [creator channel datetime msg])
 
+(defn get-token-for-member [member]
+  (chat-channel/create-channel (:spotify-id member)))
+
 (defn get-latest [channel]
   (ds/query :kind ChatMessage
             :filter (= :channel channel)))
