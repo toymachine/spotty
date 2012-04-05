@@ -6,7 +6,7 @@
             [noir.session :as session]
             [noir.server :as server]
             [spotty.handler.api]
-            [magic.views.common :as common]
+            [spotty.views.common :as common]
             [spotty.login :as login]
             [clojure.tools.logging :as log]))
 

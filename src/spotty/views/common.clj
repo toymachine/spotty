@@ -1,9 +1,9 @@
-(ns magic.views.common
+(ns spotty.views.common
   (:use [noir.core :only [defpartial]]
         [hiccup.page-helpers :only [include-css html5]]
         [clojure.pprint :only [pprint]]))
 
-(defpartial magic []
+(defpartial spotty []
   [:span.m1 "S"]
   [:span.m2 "p"]
   [:span.m3 "o"]
@@ -22,7 +22,7 @@
     [:div.navbar.navbar-fixed-top
      [:div.navbar-inner
       [:div.container
-       [:a.brand {:href "/"} [:blockquote (magic) [:small "Turn on, tune in, drop out!"]]]
+       [:a.brand {:href "/"} [:blockquote (spotty) [:small "Turn on, tune in, drop out!"]]]
        [:ul.nav
         [:li.active
          [:a {:href "/channels"} "Channels"]]
