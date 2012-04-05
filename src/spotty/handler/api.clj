@@ -4,16 +4,19 @@
             [noir.response :as response]
             [noir.session :as session]
             [spotty.model.channel :as channel]
-            [spotty.model.init :as init])
+            [spotty.model.init :as init]
+            [clojure.tools.logging :as log])
   (:use [noir.core :only [defpage]]
         [hiccup.core :only [html]]
         [clojure.pprint :only [pprint]]))
 
 (defpage "/api/channels" []
-  (response/json (for [c (channel/all)] (:name c))))
+  (response/json (for [c (channel/all)] [(ds/key-id c) (:name c)])))
 
 (defpage "/api/channel/:id" {:keys [id]}
-  (response/json {:channelid id}))
+  (if-let [channel (channel/get-by-id id)]
+    (response/json channel)
+    (response/status 404 "Not found")))
 
 (defpage [:post "/api/channel"] {:keys [name description imageurl]}
   (response/json {:success true}))
