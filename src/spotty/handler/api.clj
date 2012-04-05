@@ -71,7 +71,7 @@
                      (let [mbr (member/get-by-id (:creator cm))]
                        {:msg (:msg cm)
                         :from (:spotify-id mbr)
-                        :avator (member/get-avatar-url mbr)})))
+                        :avatar (member/get-avatar-url mbr)})))
     (channel-not-found)))
 
 (defpage [:post "/api/channel/:channel-id/chat-message"] {:keys [channel-id message]}
