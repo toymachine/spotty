@@ -10,7 +10,7 @@
         [clojure.pprint :only [pprint]]))
 
 (defpage "/api/channels" []
-  (response/json (channel/all)))
+  (response/json (for [c (channel/all)] (:name c))))
 
 
 (defpage "/api/init" []

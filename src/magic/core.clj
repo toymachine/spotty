@@ -6,16 +6,15 @@
             [noir.session :as session]
             [noir.server :as server]
             [spotty.handler.api]
-            [magic.views.welcome]
             [magic.views.common :as common]
-            [magic.login :as login]
+            [spotty.login :as login]
             [clojure.tools.logging :as log]))
 
 (noir-statuses/set-page! 404
                          (common/layout
                           [:h1 "Page not found!"]))
 
-(server/add-middleware login/logged-in-member-middleware)
+;;(server/add-middleware login/logged-in-member-middleware)
 
 (ae/def-appengine-app magic-app (noir-gae/gae-handler {:session-store (cookie-store {:key "rifkvkffdkorodkd"})}))
 

@@ -1,15 +1,15 @@
-(ns magic.member
+(ns spotty.model.member
   (:use [clojure.string :only [lower-case trim]])
   (:require [appengine-magic.services.datastore :as ds]
             [digest]))
 
-(ds/defentity Member [email, password, name])
+(ds/defentity Member [name email])
 
 (defn all []
   (ds/query :kind Member))
 
-(defn create [email password name]
-  (Member. email password name))
+(defn create [name email]
+  (ds/save! (Member. name email)))
 
 (defn find-by-email [email]
   (ds/query :kind Member

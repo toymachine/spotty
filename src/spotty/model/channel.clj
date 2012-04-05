@@ -3,11 +3,11 @@
   (:require [appengine-magic.services.datastore :as ds]
             [digest]))
 
-(ds/defentity Channel [name])
+(ds/defentity Channel [creator name description imageurl])
 
 (defn all []
   (ds/query :kind Channel))
 
-(defn create [name]
-  (Channel. name))
+(defn create [creator name description imageurl]
+  (ds/save! (Channel. creator name description imageurl)))
 

@@ -1,10 +1,12 @@
-(ns magic.login
+(ns spotty.login
   (:require [appengine-magic.services.datastore :as ds]
             [noir.session :as session]
             [noir.util.crypt :as crypt]
-            [magic.member :as member]))
+            [spotty.model.member :as member]))
 
 (def ^:dynamic *logged-in-member* nil)
+
+(comment
 
 (defn get-logged-in-member []
   *logged-in-member*)
@@ -49,3 +51,4 @@
     (ds/save! henk)
     (ds/save! boris)))
 
+)

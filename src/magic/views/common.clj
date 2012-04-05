@@ -1,8 +1,6 @@
 (ns magic.views.common
   (:use [noir.core :only [defpartial]]
         [hiccup.page-helpers :only [include-css html5]]
-        [magic.login :as login]
-        [magic.member :as member]
         [clojure.pprint :only [pprint]]))
 
 (defpartial magic []
@@ -29,10 +27,6 @@
         [:li.active
          [:a {:href "/channels"} "Channels"]]
         [:li
-         [:a {:href "/members"} "Members"]]
-        [:li
-         (if-let [member (login/get-logged-in-member)]
-           [:a {:href "/logout"} [:img {:src (member/get-avatar-url member)}]]
-           [:a {:href "/login"} "Sign In"])]]]]]
+         [:a {:href "/members"} "Members"]]]]]]
     [:div.container
      content]]))
