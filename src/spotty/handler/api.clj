@@ -12,7 +12,13 @@
 (defpage "/api/channels" []
   (response/json (for [c (channel/all)] (:name c))))
 
+(defpage "/api/channel/:id" {:keys [id]}
+  (response/json {:channelid id}))
+
+(defpage [:post "/api/channel"] {:keys [name description imageurl]}
+  (response/json {:success true}))
 
 (defpage "/api/init" []
   (init/init)
   (response/json {}))
+
