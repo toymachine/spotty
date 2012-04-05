@@ -1,11 +1,11 @@
 (ns magic.core
   (:use [ring.middleware.session.cookie :only [cookie-store]])
   (:require [appengine-magic.core :as ae]
-            [appengine-magic.services.datastore :as ds]
             [noir.util.gae :as noir-gae]
             [noir.statuses :as noir-statuses]
             [noir.session :as session]
             [noir.server :as server]
+            [spotty.handler.api]
             [magic.views.welcome]
             [magic.views.common :as common]
             [magic.login :as login]

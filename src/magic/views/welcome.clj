@@ -55,3 +55,4 @@
    [:h1 "Welcome to " (common/magic)
     (when-let [member (login/get-logged-in-member)]
       (str " " (:name member)))]))
+
