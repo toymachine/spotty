@@ -30,17 +30,32 @@
 (defn listeners-key [channel]
   (str "listeners_" (ds/key-id channel)))
 
-(defn get-listeners [channel]
-  (if-let [str-listeners (memcache/get (listeners-key channel))]
-    (read-string str-listeners)
-    #{}))
+(defn now-ms []
+  (.getTime (new java.util.Date)))
 
-(defn put-listeners! [channel listeners]
-  (memcache/put! (listeners-key channel) (prn-str listeners)))
+(def listener-timeout (* 60 1000))
 
 ;;keep track of listeners in memcached
+;;listeners = map member-id->lasttouch
+(defn get-listeners [channel]
+  (let [listeners (if-let [str-listeners (memcache/get (listeners-key channel))]
+                    (read-string str-listeners)
+                    {})
+        now-ms (now-ms)]
+    ;;filter out non current listeners
+    (into {} (for [[id last-touch] listeners
+                   :when (< (- now-ms last-touch) listener-timeout)]
+               [id last-touch]))))
+
+
+(defn get-listener-ids [channel]
+  (for [[id last-touch] (get-listeners channel)]
+    id))
+
 (defn touch-listener! [channel listener]
-  (let [listeners (get-listeners channel)]
-    (put-listeners! channel (conj listeners (:spotify-id listener)))))
+  (let [listeners (get-listeners channel)
+        now-ms (now-ms)
+        new-listeners (assoc listeners (:spotify-id listener) now-ms)]
+    (memcache/put! (listeners-key channel) (prn-str new-listeners))))
 
 

@@ -20,6 +20,6 @@
   (let [sender-id (:spotify-id sender)
         json-msg (json/generate-string {:msg msg
                                         :channel-id (ds/key-id channel)})]
-    (doseq [listener-id (channel/get-listeners)]
+    (doseq [listener-id (channel/get-listener-ids)]
       (when-not (= sender-id listener-id)
         (chat-channel/send listener-id json-msg)))))
