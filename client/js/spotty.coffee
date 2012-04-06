@@ -32,6 +32,7 @@ templates =
       <div class="chat-list">
       </div>
     </div>'
+  track_list_item: '<tr><td><%= name %></td></tr>'
 
 member_sync = (method, model, options) ->
     options.url = "http://127.0.0.1:8080/api" + model.url()
@@ -101,12 +102,32 @@ class ChannelListView extends Backbone.View
 
 class Channel extends Backbone.Model
   initialize: () ->
-    @tracks = new TrackList({channel: @})
+    @tracks = new TrackList()
+  url: () -> "/channel/" + @get("id") + "/listen"
+  tracks: false
+  listen: () ->
+    onSuccess = () ->
+      @tracks.reset (@get "tracks")
+      current = @get "current"
+      spotifyId = current["current-id"]
+      offset_ms = current["current-offset-ms"]
+      offset_sec = Math.floor offset_ms/1000
+      minutes = Math.floor offset_sec/60
+      seconds = offset_sec % 60
+
+      uri = "spotify:track:#{spotifyId}##{minutes}:#{seconds}"
+      console.log uri
+      models.player.play uri
+    onSuccess = _.bind onSuccess, @
+    @fetch
+      success: onSuccess
+  sync: list_sync
 
 class ChannelItemView extends Backbone.View
   template:  _.template templates.channel_item
   render: () ->
     @$el.html @template @model.toJSON()
+    @model.listen()
     trackListView = new TrackListView({collection: @model.tracks, el: @$el.find ".track-list"})
     chatMessages = new ChatMessages {channel: @model}
     chatMessagesView = new ChatMessagesView {collection: chatMessages, el: @$el.find ".chat-list"}
@@ -121,24 +142,20 @@ class Track extends Backbone.Model
 class TrackListView extends Backbone.View
   initialize: () ->
     @collection.on "reset", @render, @
-    @collection.fetch()
+  template: _.template templates.track_list_item
   render: (tracks) ->
+    @$el.children().remove()
     iterator = _.bind (track) ->
       spotifyId = track.get "spotify-id"
       uri = "spotify:track:#{spotifyId}"
       spotifyTrack = models.Track.fromURI uri
-      console.log spotifyTrack.name
-      console.log @$el
-      @$el.append spotifyTrack.name
+      dict = {name: spotifyTrack.name}
+      @$el.append @template dict
     , @
     tracks.each iterator
 
 class TrackList extends Backbone.Collection
-  initialize: (options) ->
-    @channel = options.channel
   model: Track
-  url: () -> "/channel/" + @channel.get("id") + "/tracks"
-  sync: list_sync
 
 member = new Member()
 member.fetch

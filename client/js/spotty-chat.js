@@ -35,6 +35,7 @@ ChatConnection = (function(_super) {
       success: function(chatConnection) {
         var rtChannel, socket, token;
         token = chatConnection.get("token");
+        return;
         rtChannel = new goog.appengine.Channel(token);
         socket = rtChannel.open();
         socket.onopen = onOpen;
