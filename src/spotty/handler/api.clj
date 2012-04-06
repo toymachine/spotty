@@ -53,14 +53,34 @@
     (response/json (channel/get-listeners channel))
     (channel-not-found)))
 
+(defn find-current [tracks offset-in-tracks-ms]
+  ;;loops trough tracks to find the track at given offset in the playlist
+  (loop [track-index 0
+         track-start-ms 0]
+    (let [track (nth tracks track-index)
+          track-duration-ms (get track "duration-ms")
+          track-end-ms (+ track-start-ms track-duration-ms)]
+      (if (and (>= offset-in-tracks-ms track-start-ms)
+               (< offset-in-tracks-ms track-end-ms))
+        {:current-index track-index
+         :current-offset-ms (- offset-in-tracks-ms track-start-ms)
+         :current-id (get track "spotify-id")}
+        (recur (inc track-index) track-end-ms)))))
+
 (defpage "/api/channel/:id/listen" {:keys [id]}
   ;;returns tracks
   ;;returns current song/offset
   ;;adds/updates current member in listeners
   (if-let [channel (channel-from-id id)]
-    (do
+    (let [tracks (channel/get-tracks channel)
+          total-duration-ms (reduce + (for [t tracks] (get t "duration-ms")))
+          current-time-ms (.getTime (new java.util.Date))
+          offset-in-tracks-ms (mod current-time-ms total-duration-ms)
+          ]
       (channel/touch-listener! channel (login/get-logged-in-member))
-      (ok))
+      (response/json {:tracks tracks
+                      :total-duration-ms total-duration-ms
+                      :current (find-current tracks offset-in-tracks-ms)}))
     (channel-not-found)))
 
 (defpage [:post "/api/channel/:channel-id/track"] {:keys [channel-id spotify-id duration-ms]}

@@ -5,7 +5,7 @@
             [clj-json.core :as json]
             [digest]))
 
-;tracks are stored as list under :tracks
+;tracks are stored as list under :tracks (with each track item as json string)
 (ds/defentity Channel [creator name description imageurl])
 
 (defn all []
