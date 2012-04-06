@@ -14,6 +14,7 @@ class ChatConnection extends Backbone.Model
     @fetch
       success: (chatConnection) ->
         token = chatConnection.get "token"
+        return
         rtChannel = new goog.appengine.Channel token
         socket = rtChannel.open()
         socket.onopen = onOpen

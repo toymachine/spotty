@@ -40,7 +40,8 @@ templates = {
       <textarea></textarea>\
       <div class="chat-list">\
       </div>\
-    </div>'
+    </div>',
+  track_list_item: '<tr><td><%= name %></td></tr>'
 };
 
 member_sync = function(method, model, options) {
@@ -243,10 +244,37 @@ Channel = (function(_super) {
   }
 
   Channel.prototype.initialize = function() {
-    return this.tracks = new TrackList({
-      channel: this
+    return this.tracks = new TrackList();
+  };
+
+  Channel.prototype.url = function() {
+    return "/channel/" + this.get("id") + "/listen";
+  };
+
+  Channel.prototype.tracks = false;
+
+  Channel.prototype.listen = function() {
+    var onSuccess;
+    onSuccess = function() {
+      var current, minutes, offset_ms, offset_sec, seconds, spotifyId, uri;
+      this.tracks.reset(this.get("tracks"));
+      current = this.get("current");
+      spotifyId = current["current-id"];
+      offset_ms = current["current-offset-ms"];
+      offset_sec = Math.floor(offset_ms / 1000);
+      minutes = Math.floor(offset_sec / 60);
+      seconds = offset_sec % 60;
+      uri = "spotify:track:" + spotifyId + "#" + minutes + ":" + seconds;
+      console.log(uri);
+      return models.player.play(uri);
+    };
+    onSuccess = _.bind(onSuccess, this);
+    return this.fetch({
+      success: onSuccess
     });
   };
+
+  Channel.prototype.sync = list_sync;
 
   return Channel;
 
@@ -267,6 +295,7 @@ ChannelItemView = (function(_super) {
   ChannelItemView.prototype.render = function() {
     var chatMessages, chatMessagesView, trackListView;
     this.$el.html(this.template(this.model.toJSON()));
+    this.model.listen();
     trackListView = new TrackListView({
       collection: this.model.tracks,
       el: this.$el.find(".track-list")
@@ -329,20 +358,23 @@ TrackListView = (function(_super) {
   }
 
   TrackListView.prototype.initialize = function() {
-    this.collection.on("reset", this.render, this);
-    return this.collection.fetch();
+    return this.collection.on("reset", this.render, this);
   };
+
+  TrackListView.prototype.template = _.template(templates.track_list_item);
 
   TrackListView.prototype.render = function(tracks) {
     var iterator;
+    this.$el.children().remove();
     iterator = _.bind(function(track) {
-      var spotifyId, spotifyTrack, uri;
+      var dict, spotifyId, spotifyTrack, uri;
       spotifyId = track.get("spotify-id");
       uri = "spotify:track:" + spotifyId;
       spotifyTrack = models.Track.fromURI(uri);
-      console.log(spotifyTrack.name);
-      console.log(this.$el);
-      return this.$el.append(spotifyTrack.name);
+      dict = {
+        name: spotifyTrack.name
+      };
+      return this.$el.append(this.template(dict));
     }, this);
     return tracks.each(iterator);
   };
@@ -361,17 +393,7 @@ TrackList = (function(_super) {
     return TrackList.__super__.constructor.apply(this, arguments);
   }
 
-  TrackList.prototype.initialize = function(options) {
-    return this.channel = options.channel;
-  };
-
   TrackList.prototype.model = Track;
-
-  TrackList.prototype.url = function() {
-    return "/channel/" + this.channel.get("id") + "/tracks";
-  };
-
-  TrackList.prototype.sync = list_sync;
 
   return TrackList;
 
