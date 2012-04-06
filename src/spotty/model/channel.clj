@@ -2,7 +2,7 @@
   (:use [clojure.string :only [lower-case trim]])
   (:require [appengine-magic.services.datastore :as ds]
             [appengine-magic.services.memcache :as memcache]
-            [clj-json.core :as json]
+            [cheshire.core :as json]
             [digest]))
 
 ;tracks are stored as list under :tracks (with each track item as json string)

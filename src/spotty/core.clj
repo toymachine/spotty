@@ -9,7 +9,7 @@
             [spotty.views.common :as common]
             [spotty.login :as login]
             [clojure.tools.logging :as log]
-            [clj-json.core :as json]))
+            [cheshire.core :as json]))
 
 (noir-statuses/set-page! 404
                          (common/layout

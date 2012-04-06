@@ -1,6 +1,6 @@
 (ns spotty.views.common
   (:use [noir.core :only [defpartial]]
-        [hiccup.page-helpers :only [include-css html5]]
+        [hiccup.page :only [include-css html5]]
         [clojure.pprint :only [pprint]]))
 
 (defpartial spotty []

@@ -3,7 +3,7 @@
   (:require [appengine-magic.services.datastore :as ds]
             [appengine-magic.services.channel :as chat-channel]
             [spotty.model.channel :as channel]
-            [clj-json.core :as json]
+            [cheshire.core :as json]
             [digest]))
 
 (ds/defentity ChatMessage [creator channel datetime msg])
