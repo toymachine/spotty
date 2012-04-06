@@ -19,3 +19,12 @@ etags:
 	find . -name "*.coffee" | etags --append --output TAGS -
 	find . -name "*.html" | etags --append --output TAGS -
 	find . -name "*.css" | etags --append --output TAGS -
+
+prepare:
+	lein appengine-prepare
+
+deploy:
+	~/opt/appengine-java-sdk/bin/appcfg.sh update war/
+
+rollback:
+	~/opt/appengine-java-sdk/bin/appcfg.sh rollback war/

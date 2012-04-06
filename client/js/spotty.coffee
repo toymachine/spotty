@@ -18,13 +18,15 @@ templates =
       <div class="channel-header">
         <a href="#" class="start-channel"><i class="icon-plus icon-white"> </i>Start your own channel</a>
       </div>
-      <div class="span2" id="channel-list">
+      <div class="span3" id="channel-list">
       </div>
       <div class="span8" id="channel-container">
       </div>
     </div'
-  channel_list_item: '<span class="channel-list-item"><%= name %></span><i class="channel-add-songs icon-plus icon-white"></i>'
+  channel_list_item: '<span class="channel-list-item">
+      <span class="span2 thumbnail"><img src="<%= imageurl %>"></span><%= name %></span><i class="channel-add-songs icon-plus icon-white"></i></span>'
   channel_item: '<h1>welcome to radio <%= name%></h1>
+    <div class="span3 thumbnail"><img src="<%= imageurl %>"></div>
     <table class="track-list table-bordered table-striped">
     </table>
     <div>
@@ -186,7 +188,7 @@ member.fetch
       channelListView.channelItemElement = "#channel-container"
       ($ ".start-channel").on "click", () ->
         channelCreateView = new ChannelCreateView {el: "#channel-container"}
-      window.connection = new ChatConnection()
+      #window.connection = new ChatConnection()
     else
       console.error "cannot be here without email address"
 
