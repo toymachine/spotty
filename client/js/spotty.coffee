@@ -14,22 +14,26 @@ templates =
       <input type="text" name="email"><br>
       <button class="btn btn-success identity-save">submit</button>
     </form>'
-  home: 'hello <%= name %>
-    <div class="row">
-      <div class="span2" id="channel-list">
+  home: '<div class="row">
+      <div class="channel-header">
+        <a href="#" class="start-channel"><i class="icon-plus icon-white"> </i>Start your own channel</a>
       </div>
+      <ul class="span3 thumbnails" id="channel-list"></ul>
       <div class="span8" id="channel-container">
       </div>
     </div'
-  channel_list_item: '<%= name %></a>'
+  channel_list_item: '<span class="channel-list-item">
+      <span class="span2 thumbnail"><img src="<%= imageurl %>"></span><%= name %></span><i class="channel-add-songs icon-plus icon-white"></i></span>'
   channel_item: '<h1>welcome to radio <%= name%></h1>
+    <div class="span3 thumbnail"><img src="<%= imageurl %>"></div>
     <table class="track-list table-bordered table-striped">
-
     </table>
     <div>
-      What do you think about this channel?<br>
-      <textarea></textarea>
-      <div class="chat-list">
+      <h2>What do you think about the current song?<h2>
+      <textarea id="chatmsg" cols="80" rows="5"></textarea>
+      <div style="height: 300px; overflow:scroll;">
+        <table class="chat-list table-bordered table-striped">
+        </table>
       </div>
     </div>'
   track_list_item: '<tr><td><%= name %></td></tr>'
@@ -63,12 +67,18 @@ class HomeView extends MemberView
   template: _.template templates.home
 
 class ChannelListItemView extends Backbone.View
+  tagName: "li"
   initialize: () ->
     @render()
   events:
-    "click": "selectModel"
-  selectModel: () ->
+    "click .channel-list-item": "selectModel"
+    "click .channel-add-songs": "addSongs"
+  selectModel: (event) ->
+    event.preventDefault()
     @model.set({selected: 1})
+  addSongs: (event) ->
+    event.preventDefault()
+    channelAddTrackView  = new ChannelAddTrackView {model: @model, el: "#channel-container"}
   template: _.template templates.channel_list_item
   render: () ->
     @$el.html @template @model.toJSON()
@@ -86,10 +96,12 @@ class ChannelListView extends Backbone.View
     list.each (model) ->
       @render(model)
     , @
-  showChannel: (model) ->
+  showChannel: (model, newValue) ->
+    if newValue is 0
+      return
     channelItemView = new ChannelItemView({model: model, el: @channelItemElement})
     channelItemView.render()
-    model.set {selected: 0}, {silent: true}
+    model.set {selected: 0}
   render: (model) ->
     channelItemView = new ChannelListItemView {model: model}
     element = channelItemView.render().el
@@ -120,6 +132,18 @@ class Channel extends Backbone.Model
 
 class ChannelItemView extends Backbone.View
   template:  _.template templates.channel_item
+  events:
+    "keydown #chatmsg": "sendMessage"
+  sendMessage: (event)->
+    if event.keyCode == 13
+      msg = $.trim($(event.target).val())
+      if msg
+        message = new ChatMessage {message: msg, channelId: @model.get 'id'}
+        message.save()
+        console.log "message saved"
+        $(event.target).val("");
+        event.preventDefault
+        false
   render: () ->
     @$el.html @template @model.toJSON()
     @model.listen()
@@ -159,8 +183,13 @@ member.fetch
   success: () ->
     if member.has "email"
       homeView = new HomeView {el: "#page-content", model: member}
-      channelList = new ChannelList()
+      window.channelList = new ChannelList()
       channelListView = new ChannelListView {collection: channelList, el: "#channel-list"}
       channelListView.channelItemElement = "#channel-container"
+      ($ ".start-channel").on "click", () ->
+        channelCreateView = new ChannelCreateView {el: "#channel-container"}
+      #window.connection = new ChatConnection()
     else
       console.error "cannot be here without email address"
+
+

@@ -1,3 +1,7 @@
+#BASE_URL = "http://henk-desktop.hyveshq:8080"
+BASE_URL = "http://spottyapi.appspot.com"
+API_URL = BASE_URL + "/api"
+
 getValue = (object, prop) ->
   if !(object && object[prop])
     return null
@@ -12,7 +16,7 @@ addSpottyHeader = (options) ->
     options.headers = headers
 
 member_sync = (method, model, options) ->
-    options.url = "http://127.0.0.1:8080/api" + model.url()
+    options.url = API_URL + model.url()
     if method is "read"
       options.url = options.url + model.get "id"
 
@@ -21,6 +25,6 @@ member_sync = (method, model, options) ->
 
 list_sync = (method, model, options) ->
     #model is here the channellist
-    options.url = "http://127.0.0.1:8080/api" + getValue(model, 'url')
+    options.url = API_URL + getValue(model, 'url')
     addSpottyHeader(options)
     Backbone.sync method, model, options

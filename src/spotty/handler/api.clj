@@ -99,10 +99,11 @@
                      (let [mbr (member/get-by-id (:creator cm))]
                        {:msg (:msg cm)
                         :from (:spotify-id mbr)
-                        :avatar (member/get-avatar-url mbr)})))
+                        :avatar (member/get-avatar-url mbr)
+                        })))
     (channel-not-found)))
 
-(defpage [:post "/api/channel/:channel-id/chat-message"] {:keys [id message]}
+(defpage [:post "/api/channel/:id/chat-message"] {:keys [id message]}
   ;;post a chat message to a channel
   (if-let [channel (channel-from-id id)]
     (do
@@ -115,7 +116,7 @@
 
 (defpage [:post "/api/channel"] {:keys [name description imageurl]}
   ;;create a new channel
-  (ok))
+  (response/json (channel/create (login/get-logged-in-member) name description imageurl)))
 
 (defpage [:put "/api/member/"] {:keys [id name email]}
   (member/create id name email)
