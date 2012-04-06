@@ -34,18 +34,13 @@ templates =
     </div>'
   track_list_item: '<tr><td><%= name %></td></tr>'
 
-member_sync = (method, model, options) ->
-    options.url = "http://127.0.0.1:8080/api" + model.url()
-    if method is "read"
-      options.url = options.url + model.get "id"
-    Backbone.sync method, model, options
-
 class Member extends Backbone.Model
   url: () ->
     base = "/member/"
   sync: member_sync
   initialize: () ->
       @set {id: session.anonymousUserID}
+      window.spotifyUserID = session.anonymousUserID
 
 class MemberView extends Backbone.View
   initialize: () ->
