@@ -29,8 +29,10 @@ templates =
     </table>
     <div>
       What do you think about this channel?<br>
-      <textarea></textarea>
-      <div class="chat-list">
+      <textarea id="chatmsg" cols="80" rows="5"></textarea>
+      <div style="height: 300px; overflow:scroll;">
+        <table class="chat-list table-bordered table-striped">
+        </table>
       </div>
     </div>'
   track_list_item: '<tr><td><%= name %></td></tr>'
@@ -128,6 +130,18 @@ class Channel extends Backbone.Model
 
 class ChannelItemView extends Backbone.View
   template:  _.template templates.channel_item
+  events:
+    "keydown #chatmsg": "sendMessage"
+  sendMessage: (event)->
+    if event.keyCode == 13
+      msg = $.trim($(event.target).val())
+      if msg
+        message = new ChatMessage {message: msg, channelId: @model.get 'id'}
+        message.save()
+        console.log "message saved"
+        $(event.target).val("");
+        event.preventDefault
+        false
   render: () ->
     @$el.html @template @model.toJSON()
     @model.listen()
@@ -170,9 +184,9 @@ member.fetch
       window.channelList = new ChannelList()
       channelListView = new ChannelListView {collection: channelList, el: "#channel-list"}
       channelListView.channelItemElement = "#channel-container"
-
       ($ ".start-channel").on "click", () ->
         channelCreateView = new ChannelCreateView {el: "#channel-container"}
+      window.connection = new ChatConnection()
     else
       console.error "cannot be here without email address"
 
