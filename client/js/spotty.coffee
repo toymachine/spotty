@@ -4,32 +4,30 @@ views = sp.require "sp://import/scripts/api/views"
 ui = sp.require "sp://import/scripts/ui"
 session = models.session
 
-getValue = (object, prop) ->
-  if !(object && object[prop])
-    return null
-  if _.isFunction object[prop]
-    object[prop]()
-  else object[prop]
-
-
 templates =
   member_identify: '
-    hell0 <%= id %>
-    <form>
+    <H1>hell0 <%= id %></H1>
+    <form class=".form-vertical">
+      <label>Name</label>
       <input type="text" name="name"><br>
+      <label>Email</label>
       <input type="text" name="email"><br>
-      <button class="identity-save">submit</button>
+      <button class="btn btn-success identity-save">submit</button>
     </form>'
   home: 'hello <%= name %>
-    <div id="channel-list">
-    </div>
-    <div id="channel-container">
-    </div>'
+    <div class="row">
+      <div class="span2" id="channel-list">
+      </div>
+      <div class="span8" id="channel-container">
+      </div>
+    </div'
   channel_list_item: '<%= name %></a>'
   channel_item: '<h1>welcome to radio <%= name%></h1>
-    <div class="track-list"></div>
+    <table class="track-list table-bordered table-striped">
+
+    </table>
     <div>
-      What do you think about this song?<br>
+      What do you think about this channel?<br>
       <textarea></textarea>
       <div class="chat-list">
       </div>
@@ -110,11 +108,8 @@ class ChannelItemView extends Backbone.View
   render: () ->
     @$el.html @template @model.toJSON()
     trackListView = new TrackListView({collection: @model.tracks, el: @$el.find ".track-list"})
-
-list_sync = (method, model, options) ->
-    #model is here the channellist
-    options.url = "http://127.0.0.1:8080/api" + getValue(model, 'url')
-    Backbone.sync method, model, options
+    chatMessages = new ChatMessages {channel: @model}
+    chatMessagesView = new ChatMessagesView {collection: chatMessages, el: @$el.find ".chat-list"}
 
 class ChannelList extends Backbone.Collection
   url: "/channels"
@@ -128,21 +123,15 @@ class TrackListView extends Backbone.View
     @collection.on "reset", @render, @
     @collection.fetch()
   render: (tracks) ->
-    #console.log(@$el)
-    playlist = new models.Playlist()
-    playlistView = new views.List playlist, (track) ->
-      console.log track
-      return new views.Track(track, views.Track.FIELD.NAME)
-
-    tracks.each (track) ->
+    iterator = _.bind (track) ->
       spotifyId = track.get "spotify-id"
-      console.log playlist.add "spotify:track:#{spotifyId}"
-
-    playlist.add "spotify:track:4Jv7lweGIUOFQ7Oq2AtAh9"
-    #console.log "playlist", playlist
-
-    console.log "pView", playlistView.node
-    @$el.append playlistView.node
+      uri = "spotify:track:#{spotifyId}"
+      spotifyTrack = models.Track.fromURI uri
+      console.log spotifyTrack.name
+      console.log @$el
+      @$el.append spotifyTrack.name
+    , @
+    tracks.each iterator
 
 class TrackList extends Backbone.Collection
   initialize: (options) ->
@@ -154,7 +143,6 @@ class TrackList extends Backbone.Collection
 member = new Member()
 member.fetch
   error: (object, response) ->
-    #if response status = 404
     identifyView = new IdentifyView {el: "#page-content", model: member}
   success: () ->
     if member.has "email"
