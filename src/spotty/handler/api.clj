@@ -13,11 +13,17 @@
         [hiccup.core :only [html]]
         [clojure.pprint :only [pprint]]))
 
+(defn not-found []
+  (response/status 404 "Not found"))
+
 (defn channel-not-found []
   (response/status 404 "Channel not found"))
 
 (defn ok []
   (response/status 200 ""))
+
+(defn channel-from-id [id]
+  (channel/get-by-id (Integer/parseInt id)))
 
 (defpage "/api/channels" []
   ;;fetch all channels
@@ -29,7 +35,7 @@
 
 (defpage "/api/channel/:id" {:keys [id]}
   ;;fetch a single channel
-  (if-let [c (channel/get-by-id (Integer/parseInt id))]
+  (if-let [c (channel-from-id id)]
     (response/json {:name (:name c)
                     :description (:description c)
                     :imageurl (:imageurl c)})
@@ -37,19 +43,21 @@
 
 (defpage "/api/channel/:id/tracks" {:keys [id]}
   ;;fetch all the tracks of the given channel
-  (if-let [channel (channel/get-by-id (Integer/parseInt id))]
+  (if-let [channel (channel-from-id id)]
     (response/json (channel/get-tracks channel))
     (channel-not-found)))
 
 (defpage "/api/channel/:id/listeners" {:keys [id]}
   ;;fetch all the tracks of the given channel
-  (if-let [channel (channel/get-by-id (Integer/parseInt id))]
+  (if-let [channel (channel-from-id id)]
     (response/json (channel/get-listeners channel))
     (channel-not-found)))
 
 (defpage "/api/channel/:id/listen" {:keys [id]}
-  ;;adds current member to listeners
-  (if-let [channel (channel/get-by-id (Integer/parseInt id))]
+  ;;returns tracks
+  ;;returns current song/offset
+  ;;adds/updates current member in listeners
+  (if-let [channel (channel-from-id id)]
     (do
       (channel/touch-listener! channel (login/get-logged-in-member))
       (ok))
@@ -57,7 +65,7 @@
 
 (defpage [:post "/api/channel/:channel-id/track"] {:keys [channel-id spotify-id duration-ms]}
   ;;add a track to a channel
-  (if-let [channel (channel/get-by-id (Integer/parseInt channel-id))]
+  (if-let [channel (channel-from-id channel-id)]
     (do
       (channel/add-track channel spotify-id (Integer/parseInt duration-ms))
       (ok))
@@ -65,7 +73,7 @@
 
 (defpage "/api/channel/:id/chat-messages" {:keys [id]}
   ;;fetch latest chat messages of the channel
-  (if-let [channel (channel/get-by-id (Integer/parseInt id))]
+  (if-let [channel (channel-from-id id)]
     ;;TODO loop in a loop
     (response/json (for [cm (chat/get-latest channel)]
                      (let [mbr (member/get-by-id (:creator cm))]
@@ -74,9 +82,9 @@
                         :avatar (member/get-avatar-url mbr)})))
     (channel-not-found)))
 
-(defpage [:post "/api/channel/:channel-id/chat-message"] {:keys [channel-id message]}
+(defpage [:post "/api/channel/:channel-id/chat-message"] {:keys [id message]}
   ;;post a chat message to a channel
-  (if-let [channel (channel/get-by-id (Integer/parseInt channel-id))]
+  (if-let [channel (channel-from-id id)]
     (do
       (chat/send-message (login/get-logged-in-member) channel message)
       (ok))
@@ -97,9 +105,9 @@
   ;;gets member by id
   (if-let [member (member/get-by-id id)]
     (response/json member)
-    (response/status 404 "Not found")))
+    (not-found)))
 
 (defpage "/api/init" []
   (init/init)
-  (response/json {}))
+  (ok))
 
