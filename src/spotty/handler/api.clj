@@ -115,7 +115,7 @@
 
 (defpage [:post "/api/channel"] {:keys [name description imageurl]}
   ;;create a new channel
-  (ok))
+  (response/json (channel/create (login/get-logged-in-member) name description imageurl))
 
 (defpage [:put "/api/member/"] {:keys [id name email]}
   (member/create id name email)

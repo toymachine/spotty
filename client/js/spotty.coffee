@@ -14,17 +14,18 @@ templates =
       <input type="text" name="email"><br>
       <button class="btn btn-success identity-save">submit</button>
     </form>'
-  home: 'hello <%= name %>
-    <div class="row">
+  home: '<div class="row">
+      <div class="channel-header">
+        <a href="#" class="start-channel"><i class="icon-plus icon-white"> </i>Start your own channel</a>
+      </div>
       <div class="span2" id="channel-list">
       </div>
       <div class="span8" id="channel-container">
       </div>
     </div'
-  channel_list_item: '<%= name %></a>'
+  channel_list_item: '<span class="channel-list-item"><%= name %></span><i class="channel-add-songs icon-plus icon-white"></i>'
   channel_item: '<h1>welcome to radio <%= name%></h1>
     <table class="track-list table-bordered table-striped">
-
     </table>
     <div>
       What do you think about this channel?<br>
@@ -66,9 +67,14 @@ class ChannelListItemView extends Backbone.View
   initialize: () ->
     @render()
   events:
-    "click": "selectModel"
-  selectModel: () ->
+    "click .channel-list-item": "selectModel"
+    "click .channel-add-songs": "addSongs"
+  selectModel: (event) ->
+    event.preventDefault()
     @model.set({selected: 1})
+  addSongs: (event) ->
+    event.preventDefault()
+    channelAddTrackView  = new ChannelAddTrackView {model: @model, el: "#channel-container"}
   template: _.template templates.channel_list_item
   render: () ->
     @$el.html @template @model.toJSON()
@@ -86,10 +92,12 @@ class ChannelListView extends Backbone.View
     list.each (model) ->
       @render(model)
     , @
-  showChannel: (model) ->
+  showChannel: (model, newValue) ->
+    if newValue is 0
+      return
     channelItemView = new ChannelItemView({model: model, el: @channelItemElement})
     channelItemView.render()
-    model.set {selected: 0}, {silent: true}
+    model.set {selected: 0}
   render: (model) ->
     channelItemView = new ChannelListItemView {model: model}
     element = channelItemView.render().el
@@ -159,8 +167,13 @@ member.fetch
   success: () ->
     if member.has "email"
       homeView = new HomeView {el: "#page-content", model: member}
-      channelList = new ChannelList()
+      window.channelList = new ChannelList()
       channelListView = new ChannelListView {collection: channelList, el: "#channel-list"}
       channelListView.channelItemElement = "#channel-container"
+
+      ($ ".start-channel").on "click", () ->
+        channelCreateView = new ChannelCreateView {el: "#channel-container"}
     else
       console.error "cannot be here without email address"
+
+

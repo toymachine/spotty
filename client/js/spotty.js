@@ -23,17 +23,18 @@ templates = {
       <input type="text" name="email"><br>\
       <button class="btn btn-success identity-save">submit</button>\
     </form>',
-  home: 'hello <%= name %>\
-    <div class="row">\
+  home: '<div class="row">\
+      <div class="channel-header">\
+        <a href="#" class="start-channel"><i class="icon-plus icon-white"> </i>Start your own channel</a>\
+      </div>\
       <div class="span2" id="channel-list">\
       </div>\
       <div class="span8" id="channel-container">\
       </div>\
     </div',
-  channel_list_item: '<%= name %></a>',
+  channel_list_item: '<span class="channel-list-item"><%= name %></span><i class="channel-add-songs icon-plus icon-white"></i>',
   channel_item: '<h1>welcome to radio <%= name%></h1>\
     <table class="track-list table-bordered table-striped">\
-\
     </table>\
     <div>\
       What do you think about this channel?<br>\
@@ -155,12 +156,23 @@ ChannelListItemView = (function(_super) {
   };
 
   ChannelListItemView.prototype.events = {
-    "click": "selectModel"
+    "click .channel-list-item": "selectModel",
+    "click .channel-add-songs": "addSongs"
   };
 
-  ChannelListItemView.prototype.selectModel = function() {
+  ChannelListItemView.prototype.selectModel = function(event) {
+    event.preventDefault();
     return this.model.set({
       selected: 1
+    });
+  };
+
+  ChannelListItemView.prototype.addSongs = function(event) {
+    var channelAddTrackView;
+    event.preventDefault();
+    return channelAddTrackView = new ChannelAddTrackView({
+      model: this.model,
+      el: "#channel-container"
     });
   };
 
@@ -201,8 +213,9 @@ ChannelListView = (function(_super) {
     }, this);
   };
 
-  ChannelListView.prototype.showChannel = function(model) {
+  ChannelListView.prototype.showChannel = function(model, newValue) {
     var channelItemView;
+    if (newValue === 0) return;
     channelItemView = new ChannelItemView({
       model: model,
       el: this.channelItemElement
@@ -210,8 +223,6 @@ ChannelListView = (function(_super) {
     channelItemView.render();
     return model.set({
       selected: 0
-    }, {
-      silent: true
     });
   };
 
@@ -405,18 +416,24 @@ member.fetch({
     });
   },
   success: function() {
-    var channelList, channelListView, homeView;
+    var channelListView, homeView;
     if (member.has("email")) {
       homeView = new HomeView({
         el: "#page-content",
         model: member
       });
-      channelList = new ChannelList();
+      window.channelList = new ChannelList();
       channelListView = new ChannelListView({
         collection: channelList,
         el: "#channel-list"
       });
-      return channelListView.channelItemElement = "#channel-container";
+      channelListView.channelItemElement = "#channel-container";
+      return ($(".start-channel")).on("click", function() {
+        var channelCreateView;
+        return channelCreateView = new ChannelCreateView({
+          el: "#channel-container"
+        });
+      });
     } else {
       return console.error("cannot be here without email address");
     }
