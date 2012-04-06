@@ -1,13 +1,10 @@
-# magic
+# spotty
 
-FIXME: write description
+Clone from github
 
-## Usage
+    lein deps
 
-FIXME: write
+    lein run
 
-## License
+point browser to localhost:8080
 
-Copyright (C) 2012 FIXME
-
-Distributed under the Eclipse Public License, the same as Clojure.
