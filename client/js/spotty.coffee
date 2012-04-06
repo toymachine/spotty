@@ -18,8 +18,7 @@ templates =
       <div class="channel-header">
         <a href="#" class="start-channel"><i class="icon-plus icon-white"> </i>Start your own channel</a>
       </div>
-      <div class="span3" id="channel-list">
-      </div>
+      <ul class="span3 thumbnails" id="channel-list"></ul>
       <div class="span8" id="channel-container">
       </div>
     </div'
@@ -30,7 +29,7 @@ templates =
     <table class="track-list table-bordered table-striped">
     </table>
     <div>
-      What do you think about this channel?<br>
+      <h2>What do you think about the current song?<h2>
       <textarea id="chatmsg" cols="80" rows="5"></textarea>
       <div style="height: 300px; overflow:scroll;">
         <table class="chat-list table-bordered table-striped">
@@ -68,6 +67,7 @@ class HomeView extends MemberView
   template: _.template templates.home
 
 class ChannelListItemView extends Backbone.View
+  tagName: "li"
   initialize: () ->
     @render()
   events:

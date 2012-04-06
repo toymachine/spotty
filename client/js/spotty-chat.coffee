@@ -51,7 +51,7 @@ class ChatMessagesView extends Backbone.View
     @collection.on "add", @render, @
     @collection.fetch()
   render: (message) ->
-    @$el.append "<tr><td>" + message.get('msg') + "</td></tr>"
+    @$el.append "<tr>" +  "<td><img src='" + message.get('avatar') + "'></td>" + "<td>" + message.get('msg') + "</td>" + "</tr>"
   renderList: (list) ->
     list.each (message) ->
       @render message

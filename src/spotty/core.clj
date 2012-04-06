@@ -35,3 +35,4 @@
 (defn -main []
   (log/info "starting spotty!")
   (ae/serve spotty-app))
+

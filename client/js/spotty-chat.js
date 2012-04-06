@@ -120,7 +120,7 @@ ChatMessagesView = (function(_super) {
   };
 
   ChatMessagesView.prototype.render = function(message) {
-    return this.$el.append("<tr><td>" + message.get('msg') + "</td></tr>");
+    return this.$el.append("<tr>" + "<td><img src='" + message.get('avatar') + "'></td>" + "<td>" + message.get('msg') + "</td>" + "</tr>");
   };
 
   ChatMessagesView.prototype.renderList = function(list) {
