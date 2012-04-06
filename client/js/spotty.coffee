@@ -188,7 +188,7 @@ member.fetch
       channelListView.channelItemElement = "#channel-container"
       ($ ".start-channel").on "click", () ->
         channelCreateView = new ChannelCreateView {el: "#channel-container"}
-      #window.connection = new ChatConnection()
+      window.connection = new ChatConnection()
     else
       console.error "cannot be here without email address"
 
